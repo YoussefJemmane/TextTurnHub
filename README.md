@@ -1,66 +1,87 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
-
 <p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+  <a href="https://laravel.com" target="_blank">
+    <img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo">
+  </a>
 </p>
 
-## About Laravel
+# TexTurn Hub
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+TexTurn Hub is a collaborative platform uniting textile companies, artisans, and eco-conscious buyers to reduce textile waste and promote sustainable practices. Our mission is to create a circular economy for textiles by connecting waste producers with recyclers and upcyclers, tracking environmental impact, and empowering all stakeholders.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🌱 Platform Goals
 
-## Learning Laravel
+- **Reduce textile waste** by connecting companies with artisans and recyclers.
+- **Empower artisans** to access affordable materials and sell recycled products.
+- **Enable buyers** to purchase sustainable, upcycled goods directly from creators.
+- **Track and showcase carbon savings** for all users.
+- **Foster a transparent, collaborative, and eco-friendly community.**
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## 🚀 Features
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **User Registration & Profiles**  
+  Custom profiles for companies, artisans, and buyers.
 
-## Laravel Sponsors
+- **Waste Exchange Marketplace**  
+  List, browse, and request textile waste for recycling or upcycling.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- **Carbon Savings Tracker**  
+  Real-time monitoring of environmental impact and carbon savings.
 
-### Premium Partners
+- **Product Marketplace**  
+  Artisans can list and sell recycled/upcycled products.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- **Messaging System**  
+  Secure communication between users for negotiation and collaboration.
 
-## Contributing
+- **Exchange History & Tracking**  
+  Track all waste exchanges and completed transactions.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- **Role-based Access**  
+  Features and dashboards tailored for companies, artisans, and buyers.
 
-## Code of Conduct
+- **Responsive UI**  
+  Modern, mobile-friendly interface with clear navigation.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+---
 
-## Security Vulnerabilities
+## ✅ TODO List (Completed)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- [x] User authentication and registration
+- [x] Company, artisan, and buyer profile creation
+- [x] Waste listing and management for companies
+- [x] Marketplace browsing for artisans and buyers
+- [x] Waste exchange request and approval workflow
+- [x] Exchange history and status tracking
+- [x] Carbon savings calculation and display
+- [x] Product listing and sales for artisans
+- [x] Messaging system for user communication
+- [x] Responsive, accessible UI with role-based navigation
+- [x] Pagination and search for marketplace listings
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📈 Roadmap (Next Steps)
+
+- [ ] Advanced analytics and reporting
+- [ ] Automated notifications and reminders
+- [ ] Integration with logistics partners
+- [ ] Enhanced review and rating system
+- [ ] Multi-language support
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Please open issues or submit pull requests to help us improve TexTurn Hub.
+
+## 🛡️ License
+
+This project is open-sourced under the [MIT license](https://opensource.org/licenses/MIT).
+
+---
+
+&copy; {{ date('Y') }} TexTurn Hub. All rights reserved.
