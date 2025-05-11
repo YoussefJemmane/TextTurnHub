@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'role' => ['required', 'string'],
         ]);
-     
+
 
         if ($request->role === 'company') {
             $request->validate([
@@ -83,6 +83,7 @@ class RegisteredUserController extends Controller
                 $profile->artisan_specialty = $request->artisan_specialty;
                 $profile->artisan_experience = $request->artisan_experience;
                 $profile->materials_interest = $request->materials_interest ? json_encode($request->materials_interest) : null;
+                
                 $profile->save();
                 break;
             default:

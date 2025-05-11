@@ -41,19 +41,23 @@ Route::middleware('auth')->group(function () {
         // Exchange details route
         Route::get('/{wasteExchange}', [\App\Http\Controllers\WasteExchangeController::class, 'show'])->name('show');
 
+Route::get('/{wasteExchange}/receipt', [WasteExchangeController::class, 'downloadReceipt'])
+    ->name('waste-exchanges.receipt');
+
+
         // Exchange action routes
         Route::post('/{wasteExchange}/accept', [\App\Http\Controllers\WasteExchangeController::class, 'accept'])->name('accept');
         Route::post('/{wasteExchange}/reject', [\App\Http\Controllers\WasteExchangeController::class, 'reject'])->name('reject');
         Route::post('/{wasteExchange}/complete', [\App\Http\Controllers\WasteExchangeController::class, 'complete'])->name('complete');
         Route::post('/{wasteExchange}/cancel', [\App\Http\Controllers\WasteExchangeController::class, 'cancel'])->name('cancel');
     });
-    
+
     // Messaging system routes
     Route::prefix('messaging')->name('messaging.')->group(function () {
         // View conversations
         Route::get('/', [MessagingController::class, 'index'])->name('index');
         Route::get('/{conversation}', [MessagingController::class, 'show'])->name('show');
-        
+
         // Create/send messages
         Route::post('/messages', [MessagingController::class, 'store'])->name('store');
         Route::post('/conversations', [MessagingController::class, 'createConversation'])->name('create');

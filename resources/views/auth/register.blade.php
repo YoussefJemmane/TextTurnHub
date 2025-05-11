@@ -10,14 +10,14 @@
     email: '',
     password: '',
     password_confirmation: '',
-    companyName: '',
-    companySize: '',
-    wasteTypes: [],
-    artisanSpecialty: '',
-    artisanExperience: '',
-    materialsInterest: [],
-    userInterests: [],
-    sustainabilityImportance: '',
+    company_name: '',
+    company_size: '',
+    waste_types: [],
+    artisan_specialty: '',
+    artisan_experience: '',
+    materials_interest: [],
+    interests: [],
+    sustainability_importance: '',
 
     nextStep() {
         if (this.currentStep === 1 && !this.role) {
@@ -44,8 +44,34 @@
         this.currentStep--;
     },
 
-    submit() {
-        document.getElementById('registration-form').submit();
+    handleSubmit(event) {
+        // Basic validation
+        if (!this.name || !this.email || !this.password) {
+            alert('Please fill in all required fields');
+            event.preventDefault();
+            return;
+        }
+
+        // Role-specific validation
+        if (this.role === 'company') {
+            if (!this.company_name || !this.company_size) {
+                alert('Please fill in all company information');
+                event.preventDefault();
+                return;
+            }
+        } else if (this.role === 'artisan') {
+            if (!this.artisan_specialty || !this.artisan_experience) {
+                alert('Please fill in all artisan information');
+                event.preventDefault();
+                return;
+            }
+        } else if (this.role === 'user') {
+            if (!this.sustainability_importance) {
+                alert('Please indicate how important sustainability is to you');
+                event.preventDefault();
+                return;
+            }
+        }
     }
 }">
     <div class="mb-8">
@@ -66,7 +92,7 @@
 
     <h2 class="text-3xl font-bold text-center mb-6">Create an Account</h2>
 
-    <form id="registration-form" method="POST" action="{{ route('register') }}" class="space-y-4">
+    <form method="POST" action="{{ route('register') }}" class="space-y-4" x-on:submit="handleSubmit">
         @csrf
         <input type="hidden" name="role" x-model="role">
 
@@ -161,12 +187,15 @@
 
                 <div class="mb-4">
                     <label for="company_name" class="block font-medium mb-1">Company Name</label>
-                    <input id="company_name" type="text" name="company_name" x-model="companyName" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600" >
+                    <input id="company_name" type="text" name="company_name" x-model="company_name" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600">
+                    @error('company_name')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label for="company_size" class="block font-medium mb-1">Company Size</label>
-                    <select id="company_size" name="company_size" x-model="companySize" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600" >
+                    <select id="company_size" name="company_size" x-model="company_size" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600">
                         <option value="">Select company size</option>
                         <option value="1-10">1-10 employees</option>
                         <option value="11-50">11-50 employees</option>
@@ -174,28 +203,34 @@
                         <option value="201-500">201-500 employees</option>
                         <option value="500+">500+ employees</option>
                     </select>
+                    @error('company_size')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="block font-medium mb-2">Waste Types Available</label>
                     <div class="space-y-2">
                         <label class="flex items-center">
-                            <input type="checkbox" name="waste_types[]" value="textile" x-model="wasteTypes" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="waste_types[]" value="textile" x-model="waste_types" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Textile Waste</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="waste_types[]" value="wood" x-model="wasteTypes" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="waste_types[]" value="wood" x-model="waste_types" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Wood Waste</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="waste_types[]" value="plastic" x-model="wasteTypes" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="waste_types[]" value="plastic" x-model="waste_types" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Plastic Waste</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="waste_types[]" value="metal" x-model="wasteTypes" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="waste_types[]" value="metal" x-model="waste_types" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Metal Scraps</span>
                         </label>
                     </div>
+                    @error('waste_types')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
 
@@ -205,7 +240,7 @@
 
                 <div class="mb-4">
                     <label for="artisan_specialty" class="block font-medium mb-1">Specialty</label>
-                    <select id="artisan_specialty" name="artisan_specialty" x-model="artisanSpecialty" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600" >
+                    <select id="artisan_specialty" name="artisan_specialty" x-model="artisan_specialty" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600">
                         <option value="">Select your specialty</option>
                         <option value="clothing">Clothing</option>
                         <option value="accessories">Accessories</option>
@@ -213,39 +248,48 @@
                         <option value="furniture">Furniture</option>
                         <option value="other">Other</option>
                     </select>
+                    @error('artisan_specialty')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label for="artisan_experience" class="block font-medium mb-1">Experience Level</label>
-                    <select id="artisan_experience" name="artisan_experience" x-model="artisanExperience" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600" >
+                    <select id="artisan_experience" name="artisan_experience" x-model="artisan_experience" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600">
                         <option value="">Select experience level</option>
                         <option value="beginner">Beginner (0-2 years)</option>
                         <option value="intermediate">Intermediate (3-5 years)</option>
                         <option value="experienced">Experienced (5+ years)</option>
                         <option value="master">Master Artisan (10+ years)</option>
                     </select>
+                    @error('artisan_experience')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label class="block font-medium mb-2">Materials of Interest</label>
                     <div class="space-y-2">
                         <label class="flex items-center">
-                            <input type="checkbox" name="materials_interest[]" value="textile" x-model="materialsInterest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="materials_interest[]" value="textile" x-model="materials_interest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Textile</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="materials_interest[]" value="wood" x-model="materialsInterest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="materials_interest[]" value="wood" x-model="materials_interest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Wood</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="materials_interest[]" value="plastic" x-model="materialsInterest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="materials_interest[]" value="plastic" x-model="materials_interest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Plastic</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="materials_interest[]" value="metal" x-model="materialsInterest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="materials_interest[]" value="metal" x-model="materials_interest" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Metal</span>
                         </label>
                     </div>
+                    @error('materials_interest')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
 
@@ -257,33 +301,39 @@
                     <label class="block font-medium mb-2">What sustainable products are you interested in?</label>
                     <div class="space-y-2">
                         <label class="flex items-center">
-                            <input type="checkbox" name="interests[]" value="clothing" x-model="userInterests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="interests[]" value="clothing" x-model="interests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Clothing</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="interests[]" value="accessories" x-model="userInterests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="interests[]" value="accessories" x-model="interests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Accessories</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="interests[]" value="home_decor" x-model="userInterests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="interests[]" value="home_decor" x-model="interests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Home Decor</span>
                         </label>
                         <label class="flex items-center">
-                            <input type="checkbox" name="interests[]" value="furniture" x-model="userInterests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
+                            <input type="checkbox" name="interests[]" value="furniture" x-model="interests" class="rounded border-gray-300 text-green-600 focus:ring-green-500">
                             <span class="ml-2">Furniture</span>
                         </label>
                     </div>
+                    @error('interests')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
 
                 <div class="mb-4">
                     <label for="sustainability_importance" class="block font-medium mb-1">How important is sustainability to you?</label>
-                    <select id="sustainability_importance" name="sustainability_importance" x-model="sustainabilityImportance" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600" >
+                    <select id="sustainability_importance" name="sustainability_importance" x-model="sustainability_importance" class="w-full p-3 border rounded-lg focus:ring-green-600 focus:border-green-600">
                         <option value="">Select option</option>
                         <option value="very">Very important</option>
                         <option value="somewhat">Somewhat important</option>
                         <option value="neutral">Neutral</option>
                         <option value="learning">I'm just learning about it</option>
                     </select>
+                    @error('sustainability_importance')
+                        <span class="text-red-600 text-sm mt-1">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
 

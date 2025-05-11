@@ -11,7 +11,7 @@
                 <h1 class="text-5xl font-bold mb-6">Transform Textile Waste into Opportunities</h1>
                 <p class="text-xl mb-8">Connect with companies and artisans to give textile waste a second life while
                     reducing environmental impact.</p>
-                
+
             </div>
         </div>
     </section>
@@ -157,6 +157,27 @@
                 <p>&copy; {{ date('Y') }} TexTurn Hub. All rights reserved.</p>
             </div>
         </footer>
+    </div>
+     <div
+        x-data="{ show: true }"
+        x-show="show"
+        class="fixed bottom-4 left-0 right-0 flex justify-center z-50"
+        style="pointer-events: none;"
+    >
+        <div
+            class="bg-gray-900 text-white px-6 py-4 rounded-lg shadow-lg flex items-center space-x-4"
+            style="pointer-events: auto;"
+        >
+            <span>
+                🚧 This platform is still in development. Features may change and data may be reset.
+            </span>
+            <button
+                @click="show = false"
+                class="ml-4 bg-green-600 hover:bg-green-700 px-3 py-1 rounded text-sm font-semibold"
+            >
+                OK
+            </button>
+        </div>
     </div>
 </div>
 @endsection

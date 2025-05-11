@@ -7,6 +7,7 @@ use App\Models\WasteExchange;
 use App\Models\CompanyProfile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class WasteExchangeController extends Controller
 {
@@ -251,5 +252,6 @@ class WasteExchangeController extends Controller
 
     return view('waste-exchanges.history');
 }
+
 }
 

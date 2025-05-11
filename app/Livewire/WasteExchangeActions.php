@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use App\Models\WasteExchange;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class WasteExchangeActions extends Component
 {
@@ -107,6 +108,30 @@ class WasteExchangeActions extends Component
         session()->flash('success', 'Exchange marked as completed successfully.');
         $this->dispatch('exchangeStatusUpdated');
     }
+
+   public function downloadReceipt(WasteExchange $wasteExchange)
+{
+    // Authorization check - only the supplier or receiver can download the receipt
+    $companyId = Auth::user()->companyProfile->id;
+    if ($wasteExchange->supplier_company_id !== $companyId && $wasteExchange->receiver_company_id !== $companyId) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // Only allow downloading receipts for completed exchanges
+    if ($wasteExchange->status !== 'completed') {
+        return redirect()->back()->with('error', 'Receipt is only available for completed exchanges.');
+    }
+
+    return response()->stream(function () use ($wasteExchange) {
+        $pdf = PDF::loadView('pdf.exchange-receipt', ['exchange' => $wasteExchange]);
+        echo $pdf->output();
+    }, 200, [
+        'Content-Type' => 'application/pdf',
+        'Content-Disposition' => 'attachment; filename="exchange-receipt-' . $wasteExchange->id . '.pdf"',
+    ]);
+    // $pdf = PDF::loadView('pdf.exchange-receipt', ['exchange' => $wasteExchange]);
+    // return $pdf->download('exchange-receipt-' . $wasteExchange->id . '.pdf');
+}
 
     public function render()
     {

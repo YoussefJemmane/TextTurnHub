@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('artisan_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('specialty');
-            $table->string('experience_level');
+            $table->string('artisan_specialty');
+            $table->string('artisan_experience');
             $table->text('materials_interest')->nullable();
             $table->timestamps();
         });

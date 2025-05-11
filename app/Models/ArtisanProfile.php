@@ -16,8 +16,8 @@ class ArtisanProfile extends Model
      * @var array<int, string>
      */
     protected $fillable = [
-        'specialty',
-        'experience_level',
+        'artisan_specialty',
+        'artisan_experience',
         'materials_interest',
     ];
 
