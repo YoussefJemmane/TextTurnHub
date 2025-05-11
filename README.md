@@ -84,4 +84,4 @@ This project is open-sourced under the [MIT license](https://opensource.org/lice
 
 ---
 
-&copy; {{ date('Y') }} TexTurn Hub. All rights reserved.
+&copy; 2025 TexTurn Hub. All rights reserved.
