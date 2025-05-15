@@ -22,18 +22,21 @@
     <header class="absolute top-0 left-0 right-0 z-10">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
             <div class="flex justify-between items-center">
-                <a href="{{ url('/') }}" class="text-2xl font-bold text-white">TexTurn Hub</a>
+                <a href="{{ url('/') }}" class="flex items-center">
+                    <img src="{{ asset('logo_white.png') }}" alt="TexTurn Hub Logo" class="h-[50px] mt-2">
+                    <span class="text-2xl font-bold text-white">TexTurn Hub</span>
+                </a>
 
-                <!-- Optional: Minimal guest navigation links -->
-                <div class="space-x-4 text-white">
+                <!-- Navigation Links -->
+                <nav class="space-x-4 text-white">
                     @if (Route::has('login') && Route::currentRouteName() != 'login')
-                        <a href="{{ route('login') }}" class="font-medium hover:underline">Sign In</a>
+                        <a href="{{ route('login') }}" class="font-medium hover:underline transition">Sign In</a>
                     @endif
 
                     @if (Route::has('register') && Route::currentRouteName() != 'register')
-                        <a href="{{ route('register') }}" class="font-medium hover:underline">Register</a>
+                        <a href="{{ route('register') }}" class="font-medium hover:underline transition">Register</a>
                     @endif
-                </div>
+                </nav>
             </div>
         </div>
     </header>

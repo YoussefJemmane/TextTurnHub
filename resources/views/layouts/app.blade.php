@@ -73,10 +73,83 @@
                                     </div>
                                 </div>
                             @endrole
-                            <a href="{{ route('messaging.index') }}" class="text-gray-700 hover:text-green-600 font-medium flex items-center">
+                            @role('artisan')
+                                <!-- Products Dropdown -->
+                                <div class="relative" x-data="{ open: false }">
+                                    <button @click="open = !open" @click.away="open = false"
+                                        class="text-gray-700 hover:text-green-600 font-medium inline-flex items-center">
+                                        <span>Products</span>
+                                        <svg class="ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                        class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                        <div class="py-1">
+                                            <a href="{{ route('products.index') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Products</a>
+                                            <a href="{{ route('products.create') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Add New
+                                                Product</a>
+                                            <a href="{{ route('products.marketplace') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Products
+                                                Marketplace</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Textile Waste Marketplace Dropdown -->
+                                <div class="relative" x-data="{ open: false }">
+                                    <button @click="open = !open" @click.away="open = false"
+                                        class="text-gray-700 hover:text-green-600 font-medium inline-flex items-center">
+                                        <span>Textile Waste</span>
+                                        <svg class="ml-1 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                            fill="currentColor">
+                                            <path fill-rule="evenodd"
+                                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+
+                                    <div x-show="open" x-transition:enter="transition ease-out duration-100"
+                                        x-transition:enter-start="transform opacity-0 scale-95"
+                                        x-transition:enter-end="transform opacity-100 scale-100"
+                                        x-transition:leave="transition ease-in duration-75"
+                                        x-transition:leave-start="transform opacity-100 scale-100"
+                                        x-transition:leave-end="transform opacity-0 scale-95"
+                                        class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                        <div class="py-1">
+                                            <a href="{{ route('marketplace.index') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Browse Textile
+                                                Waste</a>
+                                            <a href="{{ route('waste-exchanges.sent') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sent
+                                                Requests</a>
+                                            <a href="{{ route('waste-exchanges.received') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Received
+                                                Requests</a>
+                                            <a href="{{ route('waste-exchanges.history') }}"
+                                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Exchange
+                                                History</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endrole
+                            <a href="{{ route('messaging.index') }}"
+                                class="text-gray-700 hover:text-green-600 font-medium flex items-center">
                                 <span>Messanger</span>
                                 @if ($unreadMessages > 0)
-                                    <span class="ml-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                                    <span
+                                        class="ml-1 bg-green-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                                         {{ $unreadMessages }}
                                     </span>
                                 @endif
@@ -118,7 +191,8 @@
             </div>
 
             <!-- Mobile Navigation Menu -->
-            <div :class="{ 'block': open, 'hidden': !open }" class="hidden md:hidden bg-white border-t border-gray-200">
+            <div :class="{ 'block': open, 'hidden': !open }"
+                class="hidden md:hidden bg-white border-t border-gray-200">
                 <div class="py-2 space-y-1">
                     @auth
                         <a href="{{ route('dashboard') }}"

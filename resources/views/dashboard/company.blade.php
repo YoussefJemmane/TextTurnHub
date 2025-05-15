@@ -195,6 +195,7 @@
         </div>
 
         <!-- Exchange Requests -->
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div class="bg-white overflow-hidden shadow-sm rounded-lg border border-gray-200">
                 <div class="px-5 py-4 border-b border-gray-200">
@@ -206,7 +207,7 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requesting Company</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Requester</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Textile Waste</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Requested</th>
@@ -216,7 +217,15 @@
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($incomingRequests as $request)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $request->receiverCompany->company_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                @if($request->receiver_artisan_id)
+                                                    {{ $request->receiverArtisan->user->name }}
+                                                    <span class="text-xs text-gray-500">(Artisan)</span>
+                                                @else
+                                                    {{ $request->receiverCompany->company_name }}
+                                                    <span class="text-xs text-gray-500">(Company)</span>
+                                                @endif
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->textileWaste->title }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ number_format($request->quantity, 2) }} {{ $request->textileWaste->unit }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->created_at->format('M d, Y') }}</td>
@@ -232,7 +241,7 @@
                         </div>
                     @else
                         <div class="p-6 text-center text-gray-500">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                             </svg>
                             <p class="mt-4">No incoming requests at this time.</p>
@@ -251,22 +260,37 @@
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-50">
                                     <tr>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier Company</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supplier</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Textile Waste</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Quantity</th>
-                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Requested</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                                         <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach ($outgoingRequests as $request)
                                         <tr>
-                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $request->supplierCompany->company_name }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                                {{ $request->supplierCompany->company_name }}
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->textileWaste->title }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ number_format($request->quantity, 2) }} {{ $request->textileWaste->unit }}</td>
+                                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                                @if($request->final_price)
+                                                    MAD {{ number_format($request->final_price, 2) }}
+                                                @else
+                                                    -
+                                                @endif
+                                            </td>
                                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $request->created_at->format('M d, Y') }}</td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                                                    @if($request->status === 'completed') bg-green-100 text-green-800
+                                                    @elseif($request->status === 'cancelled') bg-red-100 text-red-800
+                                                    @elseif($request->status === 'accepted') bg-blue-100 text-blue-800
+                                                    @else bg-yellow-100 text-yellow-800
+                                                    @endif">
                                                     {{ ucfirst($request->status) }}
                                                 </span>
                                             </td>
@@ -277,7 +301,7 @@
                         </div>
                     @else
                         <div class="p-6 text-center text-gray-500">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                             <p class="mt-4">No outgoing requests at this time.</p>

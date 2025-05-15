@@ -16,122 +16,154 @@ class WasteExchangeActions extends Component
         $this->wasteExchange = $wasteExchange;
     }
 
+    private function isSupplier(): bool
+    {
+        return Auth::user()->companyProfile->id === $this->wasteExchange->supplier_company_id;
+    }
+
+    private function isReceiver(): bool
+    {
+        return Auth::user()->companyProfile->id === $this->wasteExchange->receiver_company_id;
+    }
+
+    private function unauthorizedAction(): void
+    {
+        abort(403, 'Unauthorized action.');
+    }
+
+    private function handleInvalidState(string $expectedStatus, string $action)
+    {
+        if ($this->wasteExchange->status !== $expectedStatus) {
+            session()->flash('error', "This exchange request cannot be {$action} in its current state.");
+            return true;
+        }
+        return false;
+    }
+
+    private function flashAndDispatch(string $message)
+    {
+        session()->flash('success', $message);
+        $this->dispatch('exchangeStatusUpdated');
+    }
+
     public function acceptRequest()
     {
-        if (Auth::user()->companyProfile->id !== $this->wasteExchange->supplier_company_id) {
-            return;
-        }
+        if (!$this->isSupplier() || $this->handleInvalidState('requested', 'accepted')) return;
 
-        if ($this->wasteExchange->status !== 'requested') {
-            session()->flash('error', 'This exchange request cannot be accepted in its current state.');
-            return;
-        }
-
-        $this->wasteExchange->status = 'accepted';
-        $this->wasteExchange->save();
+        $this->wasteExchange->update(['status' => 'accepted']);
 
         $textileWaste = $this->wasteExchange->textileWaste;
-        if ($this->wasteExchange->quantity >= $textileWaste->quantity) {
-            $textileWaste->availability_status = 'exchanged';
-        } else {
-            $textileWaste->quantity -= $this->wasteExchange->quantity;
-        }
-        $textileWaste->save();
+        $this->wasteExchange->quantity >= $textileWaste->quantity
+            ? $textileWaste->update(['availability_status' => 'exchanged'])
+            : $textileWaste->decrement('quantity', $this->wasteExchange->quantity);
 
-        session()->flash('success', 'Exchange request accepted successfully.');
-        $this->dispatch('exchangeStatusUpdated');
+        $this->flashAndDispatch('Exchange request accepted successfully.');
     }
 
     public function rejectRequest()
     {
-        if (Auth::user()->companyProfile->id !== $this->wasteExchange->supplier_company_id) {
-            return;
-        }
+        if (!$this->isSupplier() || $this->handleInvalidState('requested', 'rejected')) return;
 
-        if ($this->wasteExchange->status !== 'requested') {
-            session()->flash('error', 'This exchange request cannot be rejected in its current state.');
-            return;
-        }
-
-        $this->wasteExchange->status = 'cancelled';
-        $this->wasteExchange->save();
-
-        session()->flash('success', 'Exchange request rejected successfully.');
-        $this->dispatch('exchangeStatusUpdated');
+        $this->wasteExchange->update(['status' => 'cancelled']);
+        $this->flashAndDispatch('Exchange request rejected successfully.');
     }
 
     public function cancelRequest()
     {
-        if (Auth::user()->companyProfile->id !== $this->wasteExchange->receiver_company_id) {
-            return;
-        }
+        if (!$this->isReceiver()) return;
 
         if (!in_array($this->wasteExchange->status, ['requested', 'accepted'])) {
             session()->flash('error', 'This exchange request cannot be cancelled in its current state.');
             return;
         }
 
-        $this->wasteExchange->status = 'cancelled';
-        $this->wasteExchange->save();
+        $wasAccepted = $this->wasteExchange->status === 'accepted';
 
-        if ($this->wasteExchange->status === 'accepted') {
+        $this->wasteExchange->update(['status' => 'cancelled']);
+
+        if ($wasAccepted) {
             $textileWaste = $this->wasteExchange->textileWaste;
+
             if ($textileWaste->availability_status === 'exchanged') {
                 $textileWaste->availability_status = 'available';
             }
+
             $textileWaste->quantity += $this->wasteExchange->quantity;
             $textileWaste->save();
         }
 
-        session()->flash('success', 'Exchange request cancelled successfully.');
-        $this->dispatch('exchangeStatusUpdated');
+        $this->flashAndDispatch('Exchange request cancelled successfully.');
     }
 
+    
     public function completeExchange()
     {
-        if (!in_array(Auth::user()->companyProfile->id, [
-            $this->wasteExchange->supplier_company_id,
-            $this->wasteExchange->receiver_company_id
-        ])) {
+        $user = Auth::user();
+        $isAuthorized = false;
+    
+        if ($user->hasRole('company')) {
+            $companyId = $user->companyProfile->id;
+            $isAuthorized = in_array($companyId, [
+                $this->wasteExchange->supplier_company_id,
+                $this->wasteExchange->receiver_company_id
+            ]);
+        } elseif ($user->hasRole('artisan')) {
+            $artisanId = $user->artisanProfile->id;
+            $isAuthorized = $this->wasteExchange->receiver_artisan_id === $artisanId;
+        }
+    
+        if (!$isAuthorized || $this->handleInvalidState('accepted', 'completed')) {
             return;
         }
+    
+        $this->wasteExchange->update([
+            'status' => 'completed',
+            'exchange_date' => now()
+        ]);
+    
+        $message = $user->hasRole('artisan') 
+            ? 'Purchase marked as completed successfully.' 
+            : 'Exchange marked as completed successfully.';
+    
+        $this->flashAndDispatch($message);
+    }
 
-        if ($this->wasteExchange->status !== 'accepted') {
-            session()->flash('error', 'This exchange request cannot be completed in its current state.');
-            return;
+        
+    public function downloadReceipt(WasteExchange $wasteExchange)
+    {
+        $user = Auth::user();
+        $isAuthorized = false;
+    
+        if ($user->hasRole('company')) {
+            $companyId = $user->companyProfile->id;
+            $isAuthorized = in_array($companyId, [
+                $wasteExchange->supplier_company_id, 
+                $wasteExchange->receiver_company_id
+            ]);
+        } elseif ($user->hasRole('artisan')) {
+            $artisanId = $user->artisanProfile->id;
+            $isAuthorized = $wasteExchange->receiver_artisan_id === $artisanId;
         }
-
-        $this->wasteExchange->status = 'completed';
-        $this->wasteExchange->exchange_date = now();
-        $this->wasteExchange->save();
-
-        session()->flash('success', 'Exchange marked as completed successfully.');
-        $this->dispatch('exchangeStatusUpdated');
+    
+        if (!$isAuthorized) {
+            $this->unauthorizedAction();
+        }
+    
+        if ($wasteExchange->status !== 'completed') {
+            return redirect()->back()->with('error', 'Receipt is only available for completed exchanges.');
+        }
+    
+        $filename = $user->hasRole('artisan') ? 'purchase-receipt-' : 'exchange-receipt-';
+        $filename .= $wasteExchange->id . '.pdf';
+    
+        return response()->stream(function () use ($wasteExchange) {
+            $pdf = PDF::loadView('pdf.exchange-receipt', ['exchange' => $wasteExchange]);
+            echo $pdf->output();
+        }, 200, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
     }
-
-   public function downloadReceipt(WasteExchange $wasteExchange)
-{
-    // Authorization check - only the supplier or receiver can download the receipt
-    $companyId = Auth::user()->companyProfile->id;
-    if ($wasteExchange->supplier_company_id !== $companyId && $wasteExchange->receiver_company_id !== $companyId) {
-        abort(403, 'Unauthorized action.');
-    }
-
-    // Only allow downloading receipts for completed exchanges
-    if ($wasteExchange->status !== 'completed') {
-        return redirect()->back()->with('error', 'Receipt is only available for completed exchanges.');
-    }
-
-    return response()->stream(function () use ($wasteExchange) {
-        $pdf = PDF::loadView('pdf.exchange-receipt', ['exchange' => $wasteExchange]);
-        echo $pdf->output();
-    }, 200, [
-        'Content-Type' => 'application/pdf',
-        'Content-Disposition' => 'attachment; filename="exchange-receipt-' . $wasteExchange->id . '.pdf"',
-    ]);
-    // $pdf = PDF::loadView('pdf.exchange-receipt', ['exchange' => $wasteExchange]);
-    // return $pdf->download('exchange-receipt-' . $wasteExchange->id . '.pdf');
-}
 
     public function render()
     {

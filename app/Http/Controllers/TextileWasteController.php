@@ -162,31 +162,38 @@ class TextileWasteController extends Controller
     /**
      * Display a listing of available textile wastes for exchange.
      */
+     
     public function marketplace(Request $request)
     {
-        $companyId = Auth::user()->companyProfile->id;
-
-        $query = TextileWaste::available()
-            ->where('company_profiles_id', '!=', $companyId);
-
+        $user = Auth::user();
+        $query = TextileWaste::available();
+    
+        // If user is a company, exclude their own listings
+        if ($user->hasRole('company')) {
+            $query->where('company_profiles_id', '!=', $user->companyProfile->id);
+        }
+    
         // Apply filters if provided
         if ($request->filled('waste_type')) {
             $query->where('waste_type', $request->waste_type);
         }
-
+    
         if ($request->filled('material_type')) {
             $query->where('material_type', 'like', '%' . $request->material_type . '%');
         }
-
+    
         if ($request->filled('location')) {
             $query->where('location', 'like', '%' . $request->location . '%');
         }
-
+    
         $textileWastes = $query->latest()->paginate(5);
-
-        // Preserve query parameters in pagination links
         $textileWastes->appends($request->all());
-
-        return view('textile-wastes.marketplace', compact('textileWastes'));
+    
+        // Pass user role to view to show different actions (exchange vs buy)
+        return view('textile-wastes.marketplace', [
+            'textileWastes' => $textileWastes,
+            'userRole' => $user->roles->first()->name
+        ]);
     }
 }
+

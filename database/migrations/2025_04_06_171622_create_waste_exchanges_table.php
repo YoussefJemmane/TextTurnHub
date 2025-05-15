@@ -15,7 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('textile_waste_id')->constrained()->onDelete('cascade');
             $table->foreignId('supplier_company_id')->constrained('company_profiles')->onDelete('cascade');
-            $table->foreignId('receiver_company_id')->constrained('company_profiles')->onDelete('cascade');
+            $table->foreignId('receiver_company_id')->nullable()->constrained('company_profiles')->onDelete('cascade');
+            $table->foreignId('receiver_artisan_id')->nullable()->constrained('artisan_profiles')->onDelete('cascade');
             $table->decimal('quantity', 10, 2);
             $table->enum('status', ['requested', 'accepted', 'completed', 'cancelled'])->default('requested');
             $table->timestamp('exchange_date')->nullable();

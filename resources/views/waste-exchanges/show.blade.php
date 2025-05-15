@@ -8,7 +8,7 @@
             <!-- Header with back button -->
             <div class="mb-6 flex items-center justify-between">
                 <div>
-                    @if(Auth::user()->companyProfile->id === $wasteExchange->supplier_company_id)
+                    @if(Auth::user()->hasRole('company') && Auth::user()->companyProfile->id === $wasteExchange->supplier_company_id)
                         <a href="{{ route('waste-exchanges.received') }}"
                             class="flex items-center text-gray-600 hover:text-green-600 transition">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
@@ -32,14 +32,19 @@
                 </div>
 
                 <livewire:waste-exchange-actions :waste-exchange="$wasteExchange" />
-
             </div>
 
             <!-- Main content card -->
             <div class="bg-white rounded-xl shadow-md overflow-hidden">
                 <!-- Title & Status Header -->
                 <div class="px-6 py-4 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
-                    <h1 class="text-xl font-bold text-gray-800">Exchange Request for {{ $wasteExchange->textileWaste->title }}</h1>
+                    <h1 class="text-xl font-bold text-gray-800">
+                        @if(Auth::user()->hasRole('artisan'))
+                            Purchase Request for {{ $wasteExchange->textileWaste->title }}
+                        @else
+                            Exchange Request for {{ $wasteExchange->textileWaste->title }}
+                        @endif
+                    </h1>
                     <div class="flex items-center">
                         @if($wasteExchange->status === 'requested')
                             <span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -63,7 +68,13 @@
 
                 <!-- Exchange Information -->
                 <div class="p-6 border-b border-gray-200">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Exchange Information</h2>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                        @if(Auth::user()->hasRole('artisan'))
+                            Purchase Information
+                        @else
+                            Exchange Information
+                        @endif
+                    </h2>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div>
                             <table class="w-full">
@@ -83,7 +94,7 @@
                                     @if($wasteExchange->final_price)
                                     <tr class="border-b border-gray-100">
                                         <td class="py-2 text-gray-500">Total Price</td>
-                                        <td class="py-2 font-medium">${{ number_format($wasteExchange->final_price, 2) }}</td>
+                                        <td class="py-2 font-medium">MAD {{ number_format($wasteExchange->final_price, 2) }}</td>
                                     </tr>
                                     @endif
                                 </tbody>
@@ -98,11 +109,23 @@
                                     </tr>
                                     <tr class="border-b border-gray-100">
                                         <td class="py-2 text-gray-500">Requester</td>
-                                        <td class="py-2 font-medium">{{ $wasteExchange->receiverCompany->company_name }}</td>
+                                        <td class="py-2 font-medium">
+                                            @if($wasteExchange->receiver_artisan_id)
+                                                {{ $wasteExchange->receiverArtisan->user->name }}
+                                            @else
+                                                {{ $wasteExchange->receiverCompany->company_name }}
+                                            @endif
+                                        </td>
                                     </tr>
                                     @if($wasteExchange->exchange_date)
                                     <tr class="border-b border-gray-100">
-                                        <td class="py-2 text-gray-500">Exchange Date</td>
+                                        <td class="py-2 text-gray-500">
+                                            @if(Auth::user()->hasRole('artisan'))
+                                                Purchase Date
+                                            @else
+                                                Exchange Date
+                                            @endif
+                                        </td>
                                         <td class="py-2 font-medium">{{ \Carbon\Carbon::parse($wasteExchange->exchange_date)->format('M d, Y h:i A') }}</td>
                                     </tr>
                                     @endif
@@ -125,7 +148,13 @@
             <!-- Timeline Section -->
             <div class="mt-6 bg-white rounded-xl shadow-md overflow-hidden">
                 <div class="p-6">
-                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Exchange Timeline</h2>
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">
+                        @if(Auth::user()->hasRole('artisan'))
+                            Purchase Timeline
+                        @else
+                            Exchange Timeline
+                        @endif
+                    </h2>
                     @include('waste-exchanges.partials.exchange-timeline', ['exchange' => $wasteExchange])
                 </div>
             </div>

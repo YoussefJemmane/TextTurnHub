@@ -13,7 +13,15 @@
                     </div>
                     <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                         <div>
-                            <p class="text-sm text-gray-500">Request Created by <span class="font-medium text-gray-900">{{ $exchange->receiverCompany->company_name }}</span></p>
+                            <p class="text-sm text-gray-500">Request Created by 
+                                <span class="font-medium text-gray-900">
+                                    @if($exchange->receiver_artisan_id)
+                                        {{ $exchange->receiverArtisan->user->name }}
+                                    @else
+                                        {{ $exchange->receiverCompany->company_name }}
+                                    @endif
+                                </span>
+                            </p>
                         </div>
                         <div class="text-right text-sm whitespace-nowrap text-gray-500">
                             <time datetime="{{ $exchange->created_at }}">{{ $exchange->created_at->format('M d, Y h:i A') }}</time>
@@ -45,7 +53,13 @@
                     </div>
                     <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                         <div>
-                            <p class="text-sm text-gray-500">Request {{ $exchange->status === 'cancelled' ? 'Cancelled' : 'Accepted' }} by <span class="font-medium text-gray-900">{{ $exchange->supplierCompany->company_name }}</span></p>
+                            <p class="text-sm text-gray-500">
+                                @if($exchange->status === 'cancelled')
+                                    Request Cancelled
+                                @else
+                                    Request Accepted by <span class="font-medium text-gray-900">{{ $exchange->supplierCompany->company_name }}</span>
+                                @endif
+                            </p>
                         </div>
                         <div class="text-right text-sm whitespace-nowrap text-gray-500">
                             <time datetime="{{ $exchange->updated_at }}">{{ $exchange->updated_at->format('M d, Y h:i A') }}</time>
@@ -69,7 +83,18 @@
                     </div>
                     <div class="min-w-0 flex-1 pt-1.5 flex justify-between space-x-4">
                         <div>
-                            <p class="text-sm text-gray-500">Exchange Completed</p>
+                            <p class="text-sm text-gray-500">
+                                @if($exchange->receiver_artisan_id)
+                                    Purchase Completed
+                                @else
+                                    Exchange Completed
+                                @endif
+                                @if($exchange->final_price)
+                                    <span class="ml-2 text-green-600 font-medium">
+                                        MAD {{ number_format($exchange->final_price, 2) }}
+                                    </span>
+                                @endif
+                            </p>
                         </div>
                         <div class="text-right text-sm whitespace-nowrap text-gray-500">
                             <time datetime="{{ $exchange->exchange_date }}">{{ \Carbon\Carbon::parse($exchange->exchange_date)->format('M d, Y h:i A') }}</time>

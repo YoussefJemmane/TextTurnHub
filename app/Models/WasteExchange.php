@@ -11,6 +11,7 @@ class WasteExchange extends Model
         'textile_waste_id',
         'supplier_company_id',
         'receiver_company_id',
+        'receiver_artisan_id',
         'quantity',
         'status',
         'exchange_date',
@@ -50,6 +51,9 @@ class WasteExchange extends Model
         return $this->belongsTo(CompanyProfile::class, 'receiver_company_id');
     }
 
+    public function receiverArtisan(){
+        return $this->belongsTo(ArtisanProfile::class, "receiver_artisan_id");
+    }
     /**
      * Check if the exchange is in progress.
      */

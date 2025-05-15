@@ -9,8 +9,10 @@
                 {{-- Company Dashboard Content --}}
                 @include('dashboard.company')
             @endrole
-
-
+            @role('artisan')
+                {{-- Artisan Dashboard Content --}}
+                @include('dashboard.artisan')
+            @endrole
         </div>
     </div>
 @endsection

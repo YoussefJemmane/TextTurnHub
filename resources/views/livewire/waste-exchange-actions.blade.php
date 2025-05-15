@@ -1,6 +1,6 @@
 <div class="flex space-x-3">
     @if ($wasteExchange->status === 'requested')
-        @if (Auth::user()->companyProfile->id === $wasteExchange->supplier_company_id)
+        @if (Auth::user()->hasRole('company') && Auth::user()->companyProfile->id === $wasteExchange->supplier_company_id)
             <button wire:click="acceptRequest"
                 class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
@@ -20,7 +20,8 @@
             </button>
         @endif
 
-        @if (Auth::user()->companyProfile->id === $wasteExchange->receiver_company_id)
+        @if ((Auth::user()->hasRole('company') && Auth::user()->companyProfile->id === $wasteExchange->receiver_company_id) || 
+             (Auth::user()->hasRole('artisan') && Auth::user()->artisanProfile->id === $wasteExchange->receiver_artisan_id))
             <button wire:click="cancelRequest"
                 class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
@@ -33,15 +34,27 @@
     @endif
 
     @if ($wasteExchange->status === 'accepted')
-        <button wire:click="completeExchange"
-            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            Mark as Completed
-        </button>
+        @if (Auth::user()->hasRole('artisan'))
+            <button wire:click="completeExchange"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Confirm Receipt
+            </button>
+        @else
+            <button wire:click="completeExchange"
+                class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Mark as Completed
+            </button>
+        @endif
     @endif
 
     @if ($wasteExchange->status === 'completed')

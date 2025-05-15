@@ -1,17 +1,19 @@
 @extends('layouts.app')
 
-@section('title', 'Exchange Requests Received')
+@section('title', Auth::user()->hasRole('artisan') ? 'Purchase Requests Received' : 'Exchange Requests Received')
 
 @section('content')
     <div class="text-gray-800 py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Header -->
             <div class="mb-8 px-4 sm:px-0">
-                <h1 class="text-3xl font-bold text-gray-800">Exchange Requests Received</h1>
-                <p class="text-gray-600 mt-2">Manage exchange requests for your textile waste materials</p>
+                <h1 class="text-3xl font-bold text-gray-800">
+                    {{ Auth::user()->hasRole('artisan') ? 'Purchase Requests Received' : 'Exchange Requests Received' }}
+                </h1>
+                <p class="text-gray-600 mt-2">
+                    {{ Auth::user()->hasRole('artisan') ? 'Manage purchase requests for your products' : 'Manage exchange requests for your textile waste materials' }}
+                </p>
             </div>
-
-
 
             @if (session('success'))
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg relative mb-4"
@@ -52,8 +54,12 @@
                                     d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4">
                                 </path>
                             </svg>
-                            <h3 class="mt-2 text-lg font-medium text-gray-900">No exchange requests received</h3>
-                            <p class="mt-1 text-sm text-gray-500">You haven't received any exchange requests yet.</p>
+                            <h3 class="mt-2 text-lg font-medium text-gray-900">
+                                {{ Auth::user()->hasRole('artisan') ? 'No purchase requests received' : 'No exchange requests received' }}
+                            </h3>
+                            <p class="mt-1 text-sm text-gray-500">
+                                {{ Auth::user()->hasRole('artisan') ? 'You haven\'t received any purchase requests yet.' : 'You haven\'t received any exchange requests yet.' }}
+                            </p>
                         </div>
                     @else
                         <div class="overflow-x-auto rounded-lg border border-gray-200">
@@ -62,7 +68,7 @@
                                     <tr>
                                         <th scope="col"
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Waste Item
+                                            {{ Auth::user()->hasRole('artisan') ? 'Product' : 'Waste Item' }}
                                         </th>
                                         <th scope="col"
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -74,7 +80,7 @@
                                         </th>
                                         <th scope="col"
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Date Requested
+                                            {{ Auth::user()->hasRole('artisan') ? 'Price' : 'Date Requested' }}
                                         </th>
                                         <th scope="col"
                                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -92,16 +98,15 @@
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="flex items-center">
                                                     <div class="flex-shrink-0 h-10 w-10">
-                                                        @if (!empty($request->textileWaste->images) && is_array(json_decode($request->textileWaste->images)))
+                                                        @if ($request->textileWaste && $request->textileWaste->image)
                                                             <img class="h-10 w-10 rounded-full object-cover"
-                                                                src="{{ Storage::url(json_decode($request->textileWaste->images)[0]) }}"
+                                                                src="{{ Storage::url($request->textileWaste->image) }}"
                                                                 alt="">
                                                         @else
                                                             <div
                                                                 class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
                                                                 <svg class="h-6 w-6 text-gray-400" fill="none"
-                                                                    stroke="currentColor" viewBox="0 0 24 24"
-                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                    stroke="currentColor" viewBox="0 0 24 24">
                                                                     <path stroke-linecap="round" stroke-linejoin="round"
                                                                         stroke-width="2"
                                                                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z">
@@ -123,22 +128,34 @@
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-900">
-                                                    {{ $request->receiverCompany->company_name }}</div>
+                                                    @if ($request->receiver_artisan_id)
+                                                        {{ $request->receiverArtisan->user->name }}
+                                                        <span class="text-xs text-gray-500">(Artisan)</span>
+                                                    @else
+                                                        {{ $request->receiverCompany->company_name }}
+                                                        <span class="text-xs text-gray-500">(Company)</span>
+                                                    @endif
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 <div class="text-sm text-gray-900">
                                                     {{ number_format($request->quantity, 2) }}
-                                                    {{ $request->textileWaste->unit }}</div>
-                                                @if ($request->final_price)
-                                                    <div class="text-sm text-gray-500">
-                                                        ${{ number_format($request->final_price, 2) }}</div>
-                                                @endif
+                                                    {{ $request->textileWaste->unit }}
+                                                </div>
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
-                                                <div class="text-sm text-gray-900">
-                                                    {{ $request->created_at->format('M d, Y') }}</div>
-                                                <div class="text-sm text-gray-500">
-                                                    {{ $request->created_at->format('h:i A') }}</div>
+                                                @if (Auth::user()->hasRole('artisan'))
+                                                    <div class="text-sm text-gray-900">
+                                                        MAD {{ number_format($request->final_price, 2) }}
+                                                    </div>
+                                                @else
+                                                    <div class="text-sm text-gray-900">
+                                                        {{ $request->created_at->format('M d, Y') }}
+                                                    </div>
+                                                    <div class="text-sm text-gray-500">
+                                                        {{ $request->created_at->format('h:i A') }}
+                                                    </div>
+                                                @endif
                                             </td>
                                             <td class="px-6 py-4 whitespace-nowrap">
                                                 @if ($request->status === 'requested')
@@ -234,7 +251,7 @@
                                                         </form>
                                                     @endif
                                                 </div>
-                                            </td>
+                                            </td> 
                                         </tr>
                                     @endforeach
                                 </tbody>
